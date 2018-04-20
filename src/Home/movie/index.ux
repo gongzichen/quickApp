@@ -1,0 +1,104 @@
+<import name="list-movie" src="../list/index"></import>
+
+<template>
+  <div class="home">
+    <tabs onchange="onChangeTabIndex" class="tab">
+      <tab-bar class="tab-bar">
+        <div class="tab-item-warp" for="{{tabHeadList}}">
+          <text style="color: {{$idx == currentIndex ? theme.color: '#666666'}}" class="tab-item">{{$item.title}}</text>
+          <div style="border-color: {{theme.color}}" if="$idx == currentIndex" class="line"></div>
+        </div>
+      </tab-bar>
+
+      <tab-content class="tab-content">
+        <block for="{{tabHeadList}}">
+            <list-movie index="{{$idx}}" url="{{$item.url}}" current-index="{{currentIndex}}"></list-movie>
+        </block>
+      </tab-content>
+    </tabs>
+  </div>
+</template>
+
+
+<style lang="sass">
+  .tab-bar {
+    display: flex;
+    flex-direction: row;
+    border: 1px solid #eeeeee;
+  }
+
+  .tab-item-warp {
+    flex: 1;
+    height: 130px;
+    justify-content: center;
+    align-content: center;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .tab-item {
+    text-align: center;
+    width: 70%;
+    margin-bottom: 15px;
+  }
+
+  .line {
+    width: 70%;
+    border-style: solid;
+    border-width: 1px
+  }
+
+  .tab-content {
+    /* align-items: center; */
+    /* justify-content: center; */
+  }
+</style>
+
+
+<script>
+  import prompt from '@system.prompt'
+  export default {
+    data: {
+      tabHeadList: [
+        {
+          title: "Top250",
+          url: '/v2/movie/top250?count=20'
+        },
+        {
+          title: '正在热映',
+          url: '/v2/movie/in_theaters?count=20'
+        },
+        {
+          title: "即将上映",
+          url: '/v2/movie/coming_soon?count=20'
+        }
+      ],
+      currentIndex: 0,
+      theme: { color: '' }
+    },
+    onInit() {
+      console.log('进来movie')
+      this.theme = this.$app.$def.theme
+      // 加载第一页面
+      this.changeTabIndex(0)
+    },
+    // 加载页面
+    changeTabIndex(index) {
+      const item = Object.assign({}, this.tabHeadList[index])
+      item.currentIndex = true
+      // 替换数据
+      this.tabHeadList.splice(index, 1, item)
+    },
+    // 渲染box
+    renderTabContent(index) {
+      return !!this.tabHeadList[index].render
+    },
+
+    // 加载第一个
+    onChangeTabIndex(evt) {
+      this.currentIndex = evt.index
+      this.changeTabIndex(evt.index)
+    }
+  }
+
+</script>

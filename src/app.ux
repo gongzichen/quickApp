@@ -1,0 +1,14 @@
+<script>
+  /**
+   * 应用级别的配置，供所有页面公用
+   */
+  import "./data/es6"
+  import './data/request'
+  import util from './util'
+
+  export default {
+    showMenu: util.showMenu,
+    createShortcut: util.createShortcut,
+    theme: {skin: 'green', color: '#42bd56' }
+  }
+</script>

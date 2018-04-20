@@ -1,0 +1,215 @@
+<import name="movie" src="./movie/index"></import>
+<import name="music" src="./movie/index"></import>
+<import name="book" src="./movie/index"></import>
+<template>
+  <div class="box">
+      <div class="header" style="background-color: {{theme.color}}">
+          <image onclick="showMenu" class="head-menu" src="../assets/menu.png"></image>
+          <text class="head-title">{{menuList[currentIndex].type}}</text>
+          <image onclick="toSearch" class="head-search" src="../assets/search.png"></image>
+      </div>
+      <div class="content-warp" show="{{menuList[currentIndex].name==='film'}}">
+          <movie if="{{list[0].render}}" class="item-content" onto-detail="toMovie"></movie>
+      </div>
+      <div class="content-warp" show="{{menuList[currentIndex].name==='book'}}">
+          <movie if="{{list[1].render}}" class="item-content" onto-detail="toMovie"></movie>
+      </div>
+      <div class="content-warp" show="{{menuList[currentIndex].name==='music'}}">
+          <movie if="{{list[2].render}}" class="item-content" onto-detail="toMovie"></movie>
+      </div>
+      <!-- 底部 -->
+      <div class="bottom">
+        <div class="line"></div>
+        <div class="bottom-content">
+          <div class="item-menu" for="{{menuList}}" onclick="changeTab($idx)">
+            <image class="icon" src="{{ currentIndex === $idx ? $item.selectIcon: $item.defaultIcon }}"></image>
+            <text class="icon-word">{{$item.type}}</text>
+          </div>
+        </div>
+      </div>
+
+      <div class="model {{modelStyle}}" style="width: {{clear}}" onclick="close">
+        <div onclick="stop" class="model-menu {{menuStyle}}">
+          <div class="bg">
+            <div class="self-mess">
+              <image class="favicon" src="{{$item.img[theme.skin]}}"></image>
+              <text class="name">Keen Jaan</text>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+</template>
+
+<style lang="sass">
+  .box {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    .header {
+      height: 100px;
+      padding: 0 30px;
+      display: flex;
+      align-items: center;
+    }
+    .content-warp {
+      width: 750px;
+      flex: 1;
+      padding-bottom: 121px;
+    }
+    .bottom {
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 121px;
+      display: flex;
+      flex-direction: column;
+      .line {
+        width: 100%;
+        height: 0;
+        border: 1px solid #dddddd;
+      }
+      .bottom-content {
+        width: 100%;
+        height: 120px;
+        display: flex;
+        .item-menu{
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          .icon {
+            width: 50px;
+            height: 50px;
+          }
+          .icon-word {
+            font-size: 24px;
+            color: #999999;
+            margin-top: 8px;
+          }
+        }
+      }
+    }
+  }
+
+  .head-title {
+    flex: 1;
+    text-align: center;
+    color: #ffffff;
+  }
+
+  .head-menu {
+    width: 50px;
+    height: 50px;
+  }
+
+  .head-search {
+    width: 50px;
+    height: 50px;
+  }
+
+  /* .content {
+    width: 750px;
+    flex: 1;
+  } */
+</style>
+
+<script>
+  import router from '@system.router'
+  import prompt from '@system.prompt'
+  export default {
+    data: {
+      menuList: [
+        {
+          type: '电影',
+          defaultIcon: '../assets/film.png',
+          name: 'film'
+        },
+        {
+          type: '读书',
+          defaultIcon: '../assets/book.png',
+          name: 'book'
+        },
+        {
+          type: '音乐',
+          defaultIcon: '../assets/music.png',
+          name: 'music'
+        }
+      ],
+      skinIcon: {
+        green: {
+          film: '../assets/film-green.png',
+          book: '../assets/book-green.png',
+          music: '../assets/music-green.png'
+        },
+        blue: {
+            film: '../assets/film-blue.png',
+            book: '../assets/book-blue.png',
+            music: '../assets/music-blue.png'
+        },
+        pink: {
+            film: '../assets/film-pink.png',
+            book: '../assets/book-pink.png',
+            music: '../assets/music-pink.png'
+        }
+      },
+      list: [
+        {
+            type: 'movie',
+            render: true
+        },
+        {
+            type: 'book',
+            render: false
+        },
+        {
+            type: 'music',
+            render: false
+        }
+      ],
+      currentIndex: 0
+    },
+    onInit() {
+      console.log('开始导入数据')
+      this.theme = this.$app.$def.theme;
+      this.$page.setTitleBar({ backgroundColor: this.theme.color, textColor: '#ffffff' });
+    },
+    onReady() {
+      const skin = this.skinIcon[this.theme.skin]
+      const arr = this.menuList.map(item => {
+        item.selectIcon = skin[item.name]
+        return Object.assign({}, item)
+      })
+      this.menuList = arr
+      // 监听皮肤
+      this.$watch('theme.skin', 'switchSkin')
+    },
+    // 监听
+    switchSkin () {
+      console.log('切换皮肤')
+      // this.$page.setTitleBar({backgroundColor: newSkin})
+    },
+    showMenu() {
+      console.log('点击了21312312')
+    },
+    toSearch() {
+      console.log('点击了搜索')
+    },
+    // 切换
+    changeTab (index) {
+      this.currentIndex = index
+      // 渲染界面
+      this.list[index].render = true
+    },
+    toMovie (params) {
+      console.log('params')
+      router.push({
+        url: '/Movie',
+        params: {id: params.detail.id}
+      })
+    }
+  }
+
+</script>
